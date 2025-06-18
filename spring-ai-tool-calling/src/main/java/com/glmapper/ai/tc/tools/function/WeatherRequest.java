@@ -6,7 +6,7 @@ package com.glmapper.ai.tc.tools.function;
  * @Date 2025/5/29 17:07
  * @Created by glmapper
  */
-
-public record WeatherRequest(String location, Unit unit) {
-
+public class WeatherRequest {
+    public record WeatherRequest(String location, Unit unit) {
+    }
 }

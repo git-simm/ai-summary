@@ -1,7 +1,8 @@
 package com.glmapper.ai.mcp.client.config;
 
+import io.modelcontextprotocol.server.McpServer;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.deepseek.DeepSeekChatModel;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,7 @@ public class McpClientConfig {
      * @return
      */
     @Bean
-    ChatClient chatClient(OpenAiChatModel chatModel, ToolCallbackProvider toolCallbackProvider) {
+    ChatClient chatClient(DeepSeekChatModel chatModel, ToolCallbackProvider toolCallbackProvider) {
         return ChatClient.builder(chatModel).defaultToolCallbacks(toolCallbackProvider.getToolCallbacks()).build();
     }
 }

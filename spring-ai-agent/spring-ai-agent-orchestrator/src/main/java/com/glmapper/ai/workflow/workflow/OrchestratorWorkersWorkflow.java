@@ -96,7 +96,16 @@ public class OrchestratorWorkersWorkflow {
 
     private String workerProcess(String subtask) {
         try {
-            // 你可以根据业务自定义 system prompt
+            /*
+            SystemMessage
+            表示“系统消息”，通常用于为大模型设定行为、角色或上下文。例如：“你是一个专业的天气助手，请用简洁的语言回答用户问题。”
+            这类消息不会被视为用户输入，而是作为对模型的指令或背景设定。
+
+            UserMessage
+            表示“用户消息”，即真实用户输入的内容。例如：“明天北京天气怎么样？”
+            这类消息代表用户的提问或请求，是模型需要直接响应的内容。
+            你可以根据业务自定义 system prompt
+            */
             String systemPrompt = "你是一个高效的AI助手，请认真完成以下子任务：";
             List messages = List.of(new SystemMessage(systemPrompt), new UserMessage(subtask));
             Prompt prompt = new Prompt(messages);

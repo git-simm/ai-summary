@@ -6,11 +6,11 @@ spring:
     name: mcp-client
   profiles:
     active: mcp-client
-    ai:
-      openai:
-        api-key: sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        chat:
-          base-url: https://api.deepseek.com
-          completions-path: /v1/chat/completions
-          options:
-            model: deepseek-chat
+  ai:
+    deepseek:
+      api-key: sk-ba120f394f5a457cb948ef8238676ebc
+      chat:
+        base-url: https://api.deepseek.com
+        completions-path: /v1/chat/completions
+        options:
+          model: deepseek-chat

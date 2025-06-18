@@ -5,7 +5,7 @@ spring:
     name: spring-ai-workflow-orchestrator
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY}
+      api-key: sk-ba120f394f5a457cb948ef8238676ebc
       base-url: https://api.deepseek.com
       chat:
         options:

@@ -20,4 +20,10 @@ public class WeatherServiceServer {
         log.info("当前城市：{}", cityName);
         return "天气大风";
     }
+
+    @Tool(name = "getTomorrowWeather", description = "查询指定城市明天的天气")
+    public String getTomorrowWeather(@ToolParam(description = "城市名称") String cityName) {
+        log.info("当前城市：{}", cityName);
+        return "天气瓢泼大雨";
+    }
 }
