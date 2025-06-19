@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
 public class MultiChatClientConfigs {
 
     @Bean
-    public ChatClient openAiChatClient(OpenAiChatModel chatModel) {
+    public ChatClient openAiChatClient(DeepSeekChatModel chatModel) {
         return ChatClient.create(chatModel);
     }
 
