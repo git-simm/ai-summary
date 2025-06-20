@@ -49,15 +49,21 @@ public class SseHttpClientTransportCustomConfiguration {
         for(Map.Entry<String, McpSseClientProperties.SseParameters> serverParameters : sseProperties.getConnections().entrySet()) {
             String baseUrl = serverParameters.getValue().url();
             String sseEndpoint = serverParameters.getValue().sseEndpoint() != null ? serverParameters.getValue().sseEndpoint() : "/sse";
+            // 不同的 Mcp-server 可以设置不同的 认证header
             HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
-                    .header("Content-Type", "application/json")
-                    .header("Authorization", "test-simm");
-            HttpClientSseClientTransport transport = HttpClientSseClientTransport.builder(baseUrl)
-                    .requestBuilder(requestBuilder).sseEndpoint(sseEndpoint)
+                    .header("Content-Type", "application/json");
+            CustomSseClientTransport transport = CustomSseClientTransport.builder(baseUrl)
+                    .requestBuilder(requestBuilder).consumerRequest(builder -> {
+                        builder.header("Authorization", this.getToken());
+                    }).sseEndpoint(sseEndpoint)
                     .clientBuilder(HttpClient.newBuilder()).objectMapper(objectMapper).build();
             sseTransports.add(new NamedClientMcpTransport(serverParameters.getKey(), transport));
         }
 
         return sseTransports;
+    }
+
+    private String getToken(){
+        return "test-simm";
     }
 }
