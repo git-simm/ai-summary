@@ -102,73 +102,13 @@ public class CustomSseClientTransport implements McpClientTransport {
 
     private Consumer<HttpRequest.Builder> consumerRequest = null;
     /**
-     * Creates a new transport instance with default HTTP client and object mapper.
-     * @param baseUri the base URI of the MCP server
-     * @deprecated Use {@link io.modelcontextprotocol.client.transport.HttpClientSseClientTransport#builder(String)} instead. This
-     * constructor will be removed in future versions.
-     */
-    @Deprecated(forRemoval = true)
-    public CustomSseClientTransport(String baseUri) {
-        this(HttpClient.newBuilder(), baseUri, new ObjectMapper());
-    }
-
-    /**
-     * Creates a new transport instance with custom HTTP client builder and object mapper.
-     * @param clientBuilder the HTTP client builder to use
-     * @param baseUri the base URI of the MCP server
-     * @param objectMapper the object mapper for JSON serialization/deserialization
-     * @throws IllegalArgumentException if objectMapper or clientBuilder is null
-     * @deprecated Use {@link io.modelcontextprotocol.client.transport.HttpClientSseClientTransport#builder(String)} instead. This
-     * constructor will be removed in future versions.
-     */
-    @Deprecated(forRemoval = true)
-    public CustomSseClientTransport(HttpClient.Builder clientBuilder, String baseUri, ObjectMapper objectMapper) {
-        this(clientBuilder, baseUri, DEFAULT_SSE_ENDPOINT, objectMapper);
-    }
-
-    /**
-     * Creates a new transport instance with custom HTTP client builder and object mapper.
-     * @param clientBuilder the HTTP client builder to use
-     * @param baseUri the base URI of the MCP server
-     * @param sseEndpoint the SSE endpoint path
-     * @param objectMapper the object mapper for JSON serialization/deserialization
-     * @throws IllegalArgumentException if objectMapper or clientBuilder is null
-     * @deprecated Use {@link io.modelcontextprotocol.client.transport.HttpClientSseClientTransport#builder(String)} instead. This
-     * constructor will be removed in future versions.
-     */
-    @Deprecated(forRemoval = true)
-    public CustomSseClientTransport(HttpClient.Builder clientBuilder, String baseUri, String sseEndpoint,
-                                        ObjectMapper objectMapper) {
-        this(clientBuilder, HttpRequest.newBuilder(), baseUri, sseEndpoint, objectMapper);
-    }
-
-    /**
-     * Creates a new transport instance with custom HTTP client builder, object mapper,
-     * and headers.
-     * @param clientBuilder the HTTP client builder to use
-     * @param requestBuilder the HTTP request builder to use
-     * @param baseUri the base URI of the MCP server
-     * @param sseEndpoint the SSE endpoint path
-     * @param objectMapper the object mapper for JSON serialization/deserialization
-     * @throws IllegalArgumentException if objectMapper, clientBuilder, or headers is null
-     * @deprecated Use {@link io.modelcontextprotocol.client.transport.HttpClientSseClientTransport#builder(String)} instead. This
-     * constructor will be removed in future versions.
-     */
-    @Deprecated(forRemoval = true)
-    public CustomSseClientTransport(HttpClient.Builder clientBuilder, HttpRequest.Builder requestBuilder,
-                                        String baseUri, String sseEndpoint, ObjectMapper objectMapper) {
-        this(clientBuilder.connectTimeout(Duration.ofSeconds(10)).build(), requestBuilder, baseUri, sseEndpoint,
-                objectMapper,null);
-    }
-
-    /**
      * Creates a new transport instance with custom HTTP client builder, object mapper,
      * and headers.
      * @param httpClient the HTTP client to use
      * @param requestBuilder the HTTP request builder to use
      * @param baseUri the base URI of the MCP server
      * @param sseEndpoint the SSE endpoint path
-     * @param objectMapper the object mapper for JSON serialization/deserialization
+     * @param objectMapper the object mapper for JSON serialization/deserializatio
      * @throws IllegalArgumentException if objectMapper, clientBuilder, or headers is null
      */
     CustomSseClientTransport(HttpClient httpClient, HttpRequest.Builder requestBuilder, String baseUri,
@@ -389,9 +329,13 @@ public class CustomSseClientTransport implements McpClientTransport {
             @Override
             public void onError(Throwable error) {
                 if (!isClosing) {
-                    logger.error("SSE connection error", error);
-                    future.completeExceptionally(error);
+                    logger.error("SSE connection error, will attempt to reconnect in 3 seconds...", error);
+                    // 延迟重连
+                    Mono.delay(Duration.ofSeconds(3))
+                            .flatMap(t -> connect(handler))
+                            .subscribe();
                 }
+                future.completeExceptionally(error);
             }
         });
 
